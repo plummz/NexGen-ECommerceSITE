@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Cart — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .cart-layout { display:flex; gap:24px; align-items:flex-start; }
+    .cart-items { flex:1; min-width:0; }
+    .cart-side { width:320px; flex-shrink:0; position:sticky; top:78px; }
+    .cart-item { background:var(--dark2); border:1px solid var(--dark4); border-radius:10px; padding:16px; margin-bottom:12px; display:flex; gap:16px; align-items:flex-start; }
+    .ci-img { width:90px; height:90px; flex-shrink:0; background:var(--dark); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:38px; overflow:hidden; }
+    .ci-img img { max-width:100%; max-height:100%; object-fit:contain; }
+    .ci-body { flex:1; min-width:0; }
+    .ci-name { font-size:14px; font-weight:600; margin-bottom:4px; display:block; }
+    .ci-name:hover { color:var(--gold); }
+    .ci-var  { font-size:12px; color:var(--dim); margin-bottom:8px; }
+    .ci-price{ font-size:16px; font-weight:bold; color:var(--red); margin-bottom:8px; }
+    .ci-ctrl { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .qty-ctrl{ display:flex; border:1px solid var(--dark4); border-radius:6px; overflow:hidden; }
+    .qty-btn { background:var(--dark4); border:none; color:var(--text); width:32px; height:32px; font-size:16px; cursor:pointer; }
+    .qty-btn:hover { background:var(--red); }
+    .qty-val { background:var(--dark2); border:none; color:var(--text); width:40px; height:32px; text-align:center; font-size:14px; outline:none; }
+    .rm-btn  { background:none; border:none; color:var(--dim); font-size:12px; cursor:pointer; }
+    .rm-btn:hover { color:var(--red); }
+    .ci-sub  { font-size:14px; font-weight:bold; white-space:nowrap; margin-left:auto; flex-shrink:0; }
+    .sum-row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--dark4); font-size:14px; color:var(--dim); }
+    .sum-row:last-of-type { border-bottom:none; }
+    .sum-total{ display:flex; justify-content:space-between; font-size:18px; font-weight:bold; padding-top:14px; margin-top:8px; border-top:2px solid var(--red); }
+    .cp-row { display:flex; gap:8px; margin-bottom:8px; }
+    .cp-input{ flex:1; background:var(--dark4); border:1px solid var(--dark4); color:var(--text); padding:9px 12px; font-size:13px; border-radius:var(--radius); outline:none; min-width:0; }
+    .cp-input:focus { border-color:var(--gold); }
+    @media(max-width:900px){
+      .cart-layout { flex-direction:column-reverse; }
+      .cart-side { width:100%; position:static; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">⚡ FREE SHIPPING on orders ₱500+ &nbsp;•&nbsp; 🎟️ Have a coupon? Apply below!</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" placeholder="Search products..."
+           onkeydown="if(event.key==='Enter')location.href='products.html?q='+encodeURIComponent(this.value)"/>
+    <button>🔍</button>
+  </div>
+  <div class="nav-icons">
+    <a href="deals.html"    class="nav-icon"><span class="icon">🔥</span><span>Deals</span></a>
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html"     class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html"  class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <span>My Cart</span></div>
+  <div style="font-family:'Press Start 2P',sans-serif;font-size:14px;color:var(--gold);margin-bottom:20px">🛒 MY CART</div>
+  <div id="cartWrap"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div><p>Your one-stop shop!</p></div>
+    <div class="footer-col"><h4>Shop</h4><a href="products.html">All Products</a></div>
+    <div class="footer-col"><h4>Account</h4><a href="profile.html">Profile</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="faq.html">FAQ</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  let appliedCoupon = null;
+
+  function render() {
+    const cart = Store.getCart();
+    const el   = document.getElementById("cartWrap");
+    if (!cart.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><h3>CART IS EMPTY</h3>
+        <p>Add some products first!</p>
+        <button class="btn-primary" onclick="location.href='products.html'">Browse Products</button></div>`;
+      return;
+    }
+    const sub  = Store.getCartTotal();
+    const ship = sub >= 500 ? 0 : 80;
+    const cpD  = appliedCoupon ? appliedCoupon.discount : 0;
+    const tot  = Math.max(0, sub - cpD + ship);
+
+    el.innerHTML = `
+    <div class="cart-layout">
+      <div class="cart-items">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--dark2);border:1px solid var(--dark4);border-radius:var(--radius);margin-bottom:12px">
+          <input type="checkbox" id="selAll" checked style="accent-color:var(--red);width:16px;height:16px"
+                 onchange="document.querySelectorAll('.ci-check').forEach(c=>c.checked=this.checked)">
+          <label for="selAll" style="font-size:13px">Select All (${cart.length} item${cart.length!==1?"s":""})</label>
+          <button class="rm-btn" style="margin-left:auto" onclick="if(confirm('Remove all items?')){Store.clearCart();render();}">🗑️ Clear All</button>
+        </div>
+        ${cart.map(item => `
+        <div class="cart-item">
+          <input type="checkbox" class="ci-check" checked style="accent-color:var(--red);width:16px;height:16px;flex-shrink:0;margin-top:4px">
+          <div class="ci-img">
+            ${item.image?`<img src="${item.image}" onerror="this.style.display='none'">`:""}
+            <span style="${item.image?"display:none":""}">${productEmoji(item.category)}</span>
+          </div>
+          <div class="ci-body">
+            <a href="product.html?id=${item.productId}" class="ci-name">${item.name}</a>
+            <div class="ci-var">Variation: ${item.variation}</div>
+            <div class="ci-price">${formatPrice(item.price)}</div>
+            <div class="ci-ctrl">
+              <div class="qty-ctrl">
+                <button class="qty-btn" onclick="chQ('${item.key}',-1)">−</button>
+                <input class="qty-val" type="number" value="${item.qty}" min="1"
+                       onchange="Store.updateQty('${item.key}',parseInt(this.value)||1);render()"/>
+                <button class="qty-btn" onclick="chQ('${item.key}',1)">+</button>
+              </div>
+              <button class="rm-btn" onclick="Store.removeFromCart('${item.key}');showToast('Removed');render()">🗑️ Remove</button>
+              <button class="rm-btn" onclick="Store.removeFromCart('${item.key}');Store.toggleWishlist(${item.productId});showToast('Moved to wishlist');render()">♡ Save</button>
+            </div>
+          </div>
+          <div class="ci-sub">${formatPrice(item.price*item.qty)}</div>
+        </div>`).join("")}
+      </div>
+
+      <div class="cart-side">
+        <div class="panel mb-12" style="margin-bottom:14px">
+          <div class="panel-title">🎟️ COUPON CODE</div>
+          <div class="cp-row">
+            <input class="cp-input" type="text" id="cpCode" placeholder="Enter coupon code"
+                   value="${appliedCoupon?.code||""}" oninput="this.value=this.value.toUpperCase()"/>
+            <button class="btn-primary" style="padding:9px 16px;font-size:13px;white-space:nowrap" onclick="applyCP()">Apply</button>
+          </div>
+          <div id="cpMsg" style="font-size:12px">${appliedCoupon?`<span style="color:#22cc66">✅ ${appliedCoupon.msg}</span>`:""}</div>
+          <a href="coupons.html" style="font-size:12px;color:var(--dim);margin-top:8px;display:block">View coupons →</a>
+        </div>
+        <div class="panel">
+          <div class="panel-title">🧾 ORDER SUMMARY</div>
+          <div class="sum-row"><span>Subtotal (${cart.length} item${cart.length!==1?"s":""})</span><span>${formatPrice(sub)}</span></div>
+          <div class="sum-row"><span>Shipping</span><span style="color:${ship===0?"#22cc66":"inherit"}">${ship===0?"FREE ✅":formatPrice(ship)}</span></div>
+          ${cpD?`<div class="sum-row"><span>Coupon Discount</span><span style="color:#22cc66">-${formatPrice(cpD)}</span></div>`:""}
+          ${sub<500&&ship>0?`<div style="font-size:12px;color:var(--dim);margin-bottom:4px">Add ₱${500-sub} more for free shipping!</div>`:""}
+          <div class="sum-total"><span>TOTAL</span><span style="color:var(--red)">${formatPrice(tot)}</span></div>
+          <button class="btn-primary w-full" style="margin-top:16px;padding:14px;font-size:15px" onclick="goCheckout()">⚡ CHECKOUT</button>
+          <button class="btn-outline w-full" style="margin-top:10px" onclick="location.href='products.html'">← Continue Shopping</button>
+        </div>
+        <div class="panel" style="margin-top:14px;font-size:13px;color:var(--dim);line-height:2">
+          ✅ 100% Authentic<br>🚚 Free shipping ₱500+<br>🔄 15-Day Returns<br>💵 COD Available
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function chQ(key, d) {
+    const cart = Store.getCart();
+    const item = cart.find(i => i.key===key);
+    if (item) { item.qty = Math.max(1, item.qty+d); Store.saveCart(cart); Store.updateCartBadge(); }
+    render();
+  }
+  function applyCP() {
+    const code = document.getElementById("cpCode").value.trim();
+    const msg  = document.getElementById("cpMsg");
+    if (!code) { msg.innerHTML='<span style="color:var(--red)">Enter a code.</span>'; return; }
+    const res  = Store.applyCoupon(code, Store.getCartTotal());
+    if (res.valid) { appliedCoupon={code,...res}; msg.innerHTML=`<span style="color:#22cc66">✅ ${res.msg}</span>`; showToast("Coupon applied!"); render(); }
+    else           { msg.innerHTML=`<span style="color:var(--red)">❌ ${res.msg}</span>`; }
+  }
+  function goCheckout() {
+    if (!Store.getCart().length) { showToast("Cart is empty!","error"); return; }
+    if (appliedCoupon) localStorage.setItem("nexgen_coupon", JSON.stringify(appliedCoupon));
+    else               localStorage.removeItem("nexgen_coupon");
+    location.href = "checkout.html";
+  }
+
+  render();
+</script>
+</body>
+</html>

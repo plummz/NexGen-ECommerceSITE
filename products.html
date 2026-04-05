@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .products-layout { display:flex; gap:24px; align-items:flex-start; }
+    .sidebar { width:230px; flex-shrink:0; position:sticky; top:78px; }
+    .sidebar-panel { background:var(--dark2); border:1px solid var(--dark4); border-radius:10px; padding:18px; margin-bottom:14px; }
+    .sidebar-title { font-family:'Press Start 2P',sans-serif; font-size:10px; color:var(--gold); margin-bottom:14px; letter-spacing:1px; }
+    .filter-opt { display:flex; align-items:center; gap:8px; padding:6px 0; font-size:13px; color:var(--dim); cursor:pointer; }
+    .filter-opt input { accent-color:var(--red); }
+    .filter-opt:hover { color:var(--text); }
+    .price-row { display:flex; gap:8px; }
+    .price-inp { flex:1; background:var(--dark4); border:1px solid #333355; color:var(--text); padding:7px 10px; font-size:12px; border-radius:4px; outline:none; min-width:0; }
+    .products-main { flex:1; min-width:0; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; padding:12px 16px; background:var(--dark2); border:1px solid var(--dark4); border-radius:var(--radius); flex-wrap:wrap; }
+    .results-count { font-size:13px; color:var(--dim); }
+    .sort-sel { background:var(--dark4); border:1px solid #333355; color:var(--text); padding:7px 12px; font-size:13px; border-radius:var(--radius); outline:none; }
+    @media(max-width:768px){
+      .products-layout { flex-direction:column; }
+      .sidebar { width:100%; position:static; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">⚡ FREE SHIPPING on orders ₱500+ &nbsp;•&nbsp; COD AVAILABLE &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" id="searchInput" placeholder="Search products..."
+           onkeydown="if(event.key==='Enter')applyFilters()"/>
+    <button onclick="applyFilters()">🔍 Search</button>
+  </div>
+  <div class="nav-icons">
+    <a href="deals.html"    class="nav-icon"><span class="icon">🔥</span><span>Deals</span></a>
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html"     class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html"  class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+<div class="cat-nav" id="catNav"></div>
+
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <span id="bc">All Products</span></div>
+
+  <div class="products-layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-panel">
+        <div class="sidebar-title">📂 CATEGORIES</div>
+        <div id="catFilter"></div>
+      </div>
+      <div class="sidebar-panel">
+        <div class="sidebar-title">💰 PRICE RANGE</div>
+        <div class="price-row">
+          <input class="price-inp" type="number" id="minP" placeholder="Min ₱" min="0"/>
+          <input class="price-inp" type="number" id="maxP" placeholder="Max ₱" min="0"/>
+        </div>
+        <button class="btn-outline w-full mt-8" style="font-size:12px;padding:7px" onclick="applyFilters()">Apply</button>
+      </div>
+      <div class="sidebar-panel">
+        <div class="sidebar-title">⭐ RATING</div>
+        <label class="filter-opt"><input type="radio" name="rating" value="4.5" onclick="applyFilters()"> 4.5★ &amp; up</label>
+        <label class="filter-opt"><input type="radio" name="rating" value="4.0" onclick="applyFilters()"> 4.0★ &amp; up</label>
+        <label class="filter-opt"><input type="radio" name="rating" value="0"   onclick="applyFilters()" checked> All ratings</label>
+      </div>
+      <div class="sidebar-panel">
+        <div class="sidebar-title">🏷️ FILTER</div>
+        <label class="filter-opt"><input type="checkbox" id="f-sale" onclick="applyFilters()"> On Sale</label>
+        <label class="filter-opt"><input type="checkbox" id="f-new"  onclick="applyFilters()"> New Arrivals</label>
+        <label class="filter-opt"><input type="checkbox" id="f-best" onclick="applyFilters()"> Bestsellers</label>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="products-main">
+      <div class="toolbar">
+        <div class="results-count" id="resCount">Loading...</div>
+        <select class="sort-sel" id="sortSel" onchange="applyFilters()">
+          <option value="default">Sort: Default</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating">Highest Rated</option>
+          <option value="sold">Most Popular</option>
+          <option value="discount">Biggest Discount</option>
+        </select>
+      </div>
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div><p>Your one-stop shop!</p></div>
+    <div class="footer-col"><h4>Shop</h4><a href="products.html">All Products</a><a href="deals.html">Deals</a></div>
+    <div class="footer-col"><h4>Account</h4><a href="profile.html">Profile</a><a href="cart.html">Cart</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="faq.html">FAQ</a><a href="about.html">About</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  let currentCat = params.get("cat") || "all";
+  const currentQ  = params.get("q")   || "";
+
+  // Category nav
+  document.getElementById("catNav").innerHTML = CATEGORIES.map(c =>
+    `<a class="cat-link${c.id===currentCat?" active":""}" href="products.html?cat=${c.id}">${c.icon} ${c.label}</a>`
+  ).join("");
+
+  // Sidebar cats
+  document.getElementById("catFilter").innerHTML = CATEGORIES.map(c =>
+    `<label class="filter-opt">
+      <input type="radio" name="catR" value="${c.id}" ${c.id===currentCat?"checked":""}
+             onclick="currentCat='${c.id}';applyFilters()">
+      ${c.icon} ${c.label}
+    </label>`
+  ).join("");
+
+  // Breadcrumb
+  document.getElementById("bc").textContent =
+    CATEGORIES.find(c => c.id===currentCat)?.label || "All Products";
+
+  // Prefill search
+  if (currentQ) document.getElementById("searchInput").value = currentQ;
+
+  function applyFilters() {
+    const q    = document.getElementById("searchInput").value.trim();
+    const minP = parseFloat(document.getElementById("minP").value) || 0;
+    const maxP = parseFloat(document.getElementById("maxP").value) || Infinity;
+    const rat  = parseFloat(document.querySelector('input[name="rating"]:checked')?.value || 0);
+    const sale = document.getElementById("f-sale").checked;
+    const isNew= document.getElementById("f-new").checked;
+    const best = document.getElementById("f-best").checked;
+    const sort = document.getElementById("sortSel").value;
+
+    let res = Store.search(q, currentCat).filter(p => {
+      if (p.price < minP || p.price > maxP) return false;
+      if (p.rating < rat)                    return false;
+      if (sale && !p.originalPrice)           return false;
+      if (isNew && p.badge !== "NEW")         return false;
+      if (best && p.badge !== "BESTSELLER")   return false;
+      return true;
+    });
+
+    if (sort==="price-asc")  res.sort((a,b)=>a.price-b.price);
+    if (sort==="price-desc") res.sort((a,b)=>b.price-a.price);
+    if (sort==="rating")     res.sort((a,b)=>b.rating-a.rating);
+    if (sort==="sold")       res.sort((a,b)=>b.sold-a.sold);
+    if (sort==="discount")   res.sort((a,b)=>((b.originalPrice-b.price)/b.originalPrice||0)-((a.originalPrice-a.price)/a.originalPrice||0));
+
+    const grid  = document.getElementById("productsGrid");
+    const count = document.getElementById("resCount");
+    if (count) count.textContent = res.length + " product" + (res.length!==1?"s":"") + " found";
+    if (grid)  grid.innerHTML = res.map(p => buildProductCard(p)).join("") ||
+      `<div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🔍</div><h3>NO RESULTS</h3>
+        <p>Try a different search or category.</p>
+        <button class="btn-primary" onclick="location.href='products.html'">Clear Filters</button>
+      </div>`;
+  }
+
+  applyFilters();
+</script>
+</body>
+</html>

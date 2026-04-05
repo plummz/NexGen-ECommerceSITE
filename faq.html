@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ & Help Center — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .faq-hero {
+      background: linear-gradient(135deg, var(--dark), #1a0010);
+      border-bottom: 3px solid var(--red);
+      padding: 50px 60px;
+      text-align: center;
+    }
+    .faq-hero h1 {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 22px; color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .faq-hero p { font-size: 15px; color: var(--text-dim); margin-bottom: 24px; }
+    .faq-search {
+      display: flex; max-width: 500px;
+      margin: 0 auto;
+    }
+    .faq-search input {
+      flex: 1; background: var(--dark4);
+      border: 1px solid var(--red); border-right: none;
+      color: var(--text); padding: 12px 16px;
+      font-size: 14px; border-radius: var(--radius) 0 0 var(--radius);
+      outline: none;
+    }
+    .faq-search input::placeholder { color: #666688; }
+    .faq-search button {
+      background: var(--red); border: none; color: white;
+      padding: 12px 20px; font-size: 14px;
+      border-radius: 0 var(--radius) var(--radius) 0; cursor: pointer;
+    }
+
+    .help-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px; margin-bottom: 40px;
+    }
+    .help-cat-card {
+      background: var(--dark2); border: 1px solid var(--dark4);
+      border-radius: 10px; padding: 20px 16px;
+      text-align: center; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .help-cat-card:hover, .help-cat-card.active {
+      border-color: var(--red); background: var(--dark);
+    }
+    .help-cat-card .hc-icon { font-size: 32px; margin-bottom: 8px; }
+    .help-cat-card .hc-name { font-size: 13px; font-weight: bold; color: var(--text); margin-bottom: 4px; }
+    .help-cat-card .hc-count { font-size: 11px; color: var(--text-dim); }
+    .help-cat-card:hover .hc-name, .help-cat-card.active .hc-name { color: var(--gold); }
+
+    .faq-layout { display: flex; gap: 24px; align-items: flex-start; }
+    .faq-sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 80px; }
+    .faq-sidebar-item {
+      display: block; padding: 10px 14px;
+      font-size: 13px; color: var(--text-dim);
+      border-left: 2px solid transparent;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .faq-sidebar-item:hover, .faq-sidebar-item.active {
+      color: var(--gold); border-left-color: var(--red);
+      background: var(--dark2);
+    }
+    .faq-main { flex: 1; }
+
+    .faq-group { margin-bottom: 32px; }
+    .faq-group-title {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 11px; color: var(--gold);
+      letter-spacing: 1px; margin-bottom: 14px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--dark4);
+    }
+    .faq-item {
+      background: var(--dark2); border: 1px solid var(--dark4);
+      border-radius: 8px; margin-bottom: 8px; overflow: hidden;
+    }
+    .faq-q {
+      padding: 14px 16px; cursor: pointer;
+      display: flex; justify-content: space-between;
+      align-items: center; font-size: 14px; font-weight: 600;
+      color: var(--text); transition: background 0.2s;
+    }
+    .faq-q:hover { background: var(--dark); }
+    .faq-q.open { color: var(--gold); background: var(--dark); }
+    .faq-q .arrow { font-size: 12px; color: var(--text-dim); transition: transform 0.2s; flex-shrink: 0; margin-left: 12px; }
+    .faq-q.open .arrow { transform: rotate(180deg); color: var(--gold); }
+    .faq-a {
+      display: none; padding: 14px 16px;
+      font-size: 13px; color: var(--text-dim);
+      line-height: 1.8; border-top: 1px solid var(--dark4);
+      background: var(--dark);
+    }
+    .faq-a.open { display: block; }
+    .faq-a a { color: var(--gold); }
+    .faq-a ul { padding-left: 18px; margin-top: 8px; }
+    .faq-a li { margin-bottom: 4px; }
+
+    .contact-banner {
+      background: linear-gradient(135deg, var(--red), #880000);
+      border-radius: 12px; padding: 28px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 40px;
+    }
+    .contact-banner h3 {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 13px; color: var(--gold); margin-bottom: 8px;
+    }
+    .contact-banner p { font-size: 13px; color: rgba(255,255,255,0.8); }
+    .contact-methods { display: flex; gap: 12px; }
+    .contact-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white; padding: 10px 20px;
+      border-radius: var(--radius); font-size: 13px;
+      font-weight: bold; cursor: pointer; transition: all 0.2s;
+    }
+    .contact-btn:hover { background: rgba(255,255,255,0.25); }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">❓ HELP CENTER &nbsp;•&nbsp; Find answers to your questions &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" placeholder="Search products..." onkeydown="if(event.key==='Enter'){location.href='products.html?q='+encodeURIComponent(this.value)}"/>
+    <button>🔍</button>
+  </div>
+  <div class="nav-icons">
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html" class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html" class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<!-- FAQ HERO -->
+<div class="faq-hero">
+  <h1>❓ HELP CENTER</h1>
+  <p>Find answers to common questions about orders, shipping, returns, and more.</p>
+  <div class="faq-search">
+    <input type="text" id="faqSearch" placeholder="Search for help... e.g. shipping, COD, returns" oninput="searchFaq()"/>
+    <button onclick="searchFaq()">🔍 Search</button>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <span>Help Center</span></div>
+
+  <!-- QUICK CATEGORY CARDS -->
+  <div class="help-categories">
+    <div class="help-cat-card" onclick="scrollToSection('orders')">
+      <div class="hc-icon">📦</div>
+      <div class="hc-name">Orders</div>
+      <div class="hc-count">8 articles</div>
+    </div>
+    <div class="help-cat-card" onclick="scrollToSection('shipping')">
+      <div class="hc-icon">🚚</div>
+      <div class="hc-name">Shipping</div>
+      <div class="hc-count">6 articles</div>
+    </div>
+    <div class="help-cat-card" onclick="scrollToSection('returns')">
+      <div class="hc-icon">🔄</div>
+      <div class="hc-name">Returns & Refunds</div>
+      <div class="hc-count">5 articles</div>
+    </div>
+    <div class="help-cat-card" onclick="scrollToSection('payment')">
+      <div class="hc-icon">💳</div>
+      <div class="hc-name">Payments</div>
+      <div class="hc-count">7 articles</div>
+    </div>
+    <div class="help-cat-card" onclick="scrollToSection('account')">
+      <div class="hc-icon">👤</div>
+      <div class="hc-name">Account</div>
+      <div class="hc-count">5 articles</div>
+    </div>
+    <div class="help-cat-card" onclick="scrollToSection('products')">
+      <div class="hc-icon">🎮</div>
+      <div class="hc-name">Products</div>
+      <div class="hc-count">6 articles</div>
+    </div>
+  </div>
+
+  <div class="faq-layout">
+    <!-- SIDEBAR -->
+    <div class="faq-sidebar">
+      <div class="panel">
+        <div class="panel-title">📂 TOPICS</div>
+        <a class="faq-sidebar-item active" onclick="scrollToSection('orders')">📦 Orders</a>
+        <a class="faq-sidebar-item" onclick="scrollToSection('shipping')">🚚 Shipping</a>
+        <a class="faq-sidebar-item" onclick="scrollToSection('returns')">🔄 Returns & Refunds</a>
+        <a class="faq-sidebar-item" onclick="scrollToSection('payment')">💳 Payment</a>
+        <a class="faq-sidebar-item" onclick="scrollToSection('account')">👤 Account</a>
+        <a class="faq-sidebar-item" onclick="scrollToSection('products')">🎮 Products</a>
+        <a class="faq-sidebar-item" onclick="scrollToSection('coupons-sec')">🎟️ Coupons</a>
+      </div>
+      <div class="panel mt-20">
+        <div class="panel-title">📞 NEED MORE HELP?</div>
+        <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:12px">
+          Can't find your answer? Contact us directly!
+        </p>
+        <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:6px">📱 09671756325</div>
+        <div style="font-size:12px;color:var(--text-dim)">Mon–Sat, 8AM–8PM</div>
+      </div>
+    </div>
+
+    <!-- MAIN FAQ -->
+    <div class="faq-main" id="faqMain">
+
+      <!-- ORDERS -->
+      <div class="faq-group" id="sec-orders">
+        <div class="faq-group-title">📦 ORDERS</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I place an order? <span class="arrow">▼</span></div>
+          <div class="faq-a">Browse our products, select your preferred variation, add to cart, then proceed to checkout. Fill in your delivery details and choose your payment method. Once submitted, you'll see an order confirmation with your Order ID.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I cancel or modify my order? <span class="arrow">▼</span></div>
+          <div class="faq-a">You can cancel or modify your order within <strong>2 hours</strong> of placing it. After that, orders are sent to processing. Contact us immediately at 09671756325 via call or SMS to request a cancellation.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I track my order? <span class="arrow">▼</span></div>
+          <div class="faq-a">Once your order is shipped, we'll send a tracking number via SMS to the phone number you provided at checkout. You can also view your order status in <a href="profile.html#orders">My Profile → My Orders</a>.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What happens if I'm not home during delivery? <span class="arrow">▼</span></div>
+          <div class="faq-a">Our courier will attempt delivery up to 2 times. If nobody is available, they'll leave a notice and your package will be held at the nearest hub for 3–5 days. Contact us or the courier to arrange re-delivery or pickup.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I order in bulk or wholesale? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! For bulk orders of 10+ units or wholesale inquiries, contact us at 09671756325. We offer special discounts for bulk purchases and resellers.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do you have a minimum order amount? <span class="arrow">▼</span></div>
+          <div class="faq-a">No minimum order! However, free shipping applies to orders ₱500 and above. Orders below ₱500 have an ₱80 shipping fee.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What is my order ID for? <span class="arrow">▼</span></div>
+          <div class="faq-a">Your Order ID (e.g. NXG-ABC123) is your unique reference number. Use it when contacting us about a specific order, tracking deliveries, or requesting refunds.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I pre-order items that are out of stock? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! Contact us at 09671756325 to inquire about pre-orders. We'll notify you once the item is available and hold your reservation.</div>
+        </div>
+      </div>
+
+      <!-- SHIPPING -->
+      <div class="faq-group" id="sec-shipping">
+        <div class="faq-group-title">🚚 SHIPPING & DELIVERY</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How long does delivery take? <span class="arrow">▼</span></div>
+          <div class="faq-a">Standard delivery takes <strong>3–7 business days</strong> depending on your location:
+            <ul>
+              <li>Metro Manila: 1–3 days</li>
+              <li>Major Cities (Cebu, Davao, Iloilo): 3–5 days</li>
+              <li>Provincial Areas: 5–7 days</li>
+              <li>Remote Islands: 7–10 days</li>
+            </ul>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How much is the shipping fee? <span class="arrow">▼</span></div>
+          <div class="faq-a">Shipping is <strong>FREE</strong> for all orders ₱500 and above! For orders below ₱500, a flat shipping fee of ₱80 applies. You can also use the coupon code <strong>FREESHIP</strong> for free shipping on any order.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do you ship nationwide? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! We ship to all provinces and cities across the Philippines including Luzon, Visayas, and Mindanao. Remote island areas may take longer and may have additional fees.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What courier do you use? <span class="arrow">▼</span></div>
+          <div class="faq-a">We use trusted couriers including J&T Express, LBC, Grab Express, and Lalamove depending on your area. You'll receive your tracking number via SMS once shipped.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do you offer same-day or next-day delivery? <span class="arrow">▼</span></div>
+          <div class="faq-a">Same-day delivery is available in select Metro Manila areas for an additional fee. Contact us at 09671756325 before placing your order to check availability.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What if my order arrives late? <span class="arrow">▼</span></div>
+          <div class="faq-a">If your order arrives later than the estimated delivery date, you are entitled to ₱50 compensation. Contact us at 09671756325 with your Order ID to claim this.</div>
+        </div>
+      </div>
+
+      <!-- RETURNS -->
+      <div class="faq-group" id="sec-returns">
+        <div class="faq-group-title">🔄 RETURNS & REFUNDS</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What is your return policy? <span class="arrow">▼</span></div>
+          <div class="faq-a">We offer a <strong>15-day return policy</strong> from the date of delivery. Items must be unused, in original packaging, and with all accessories/tags intact. Items damaged due to misuse are not eligible for return.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">My item arrived damaged. What do I do? <span class="arrow">▼</span></div>
+          <div class="faq-a">Take a photo or video of the damaged item and contact us within <strong>3 days</strong> of delivery at 09671756325. We'll arrange a free replacement or full refund immediately — no questions asked.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do refunds work? <span class="arrow">▼</span></div>
+          <div class="faq-a">Approved refunds are processed within <strong>3–5 business days</strong>. Refunds are sent via GCash, Maya, or bank transfer depending on your original payment method. COD refunds are sent via GCash.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">I received the wrong item. What now? <span class="arrow">▼</span></div>
+          <div class="faq-a">We sincerely apologize! Contact us at 09671756325 with your Order ID and a photo of the item received. We'll ship the correct item at no additional cost and arrange a return for the wrong item.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Who shoulders the return shipping cost? <span class="arrow">▼</span></div>
+          <div class="faq-a">For damaged, defective, or wrong items — we cover all return shipping costs. For buyer's remorse or change of mind returns, the buyer shoulders the return shipping fee.</div>
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="faq-group" id="sec-payment">
+        <div class="faq-group-title">💳 PAYMENT METHODS</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <span class="arrow">▼</span></div>
+          <div class="faq-a">We accept:
+            <ul>
+              <li>💵 Cash on Delivery (COD)</li>
+              <li>📱 GCash (09671756325)</li>
+              <li>📲 Maya / PayMaya (09671756325)</li>
+              <li>🏦 Bank Transfer (BDO, BPI, UnionBank)</li>
+              <li>📋 Installment — 3 months via NexGenPay (0% interest)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Is Cash on Delivery (COD) available? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! COD is available for most areas nationwide. Simply select "Cash on Delivery" at checkout and prepare the exact amount when the courier arrives.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I pay via GCash? <span class="arrow">▼</span></div>
+          <div class="faq-a">After placing your order, send the payment to GCash number <strong>09671756325 (Juan Rey)</strong>. Take a screenshot and send it to us via SMS. Your order will be processed upon payment confirmation.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do you offer installment payments? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! NexGenPay allows you to split your payment into 3 equal monthly installments with 0% interest. Available for orders above ₱1,000. Our team will contact you within 24 hours to set it up.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Is it safe to order online from your shop? <span class="arrow">▼</span></div>
+          <div class="faq-a">Absolutely! All transactions are handled securely. We never store your credit card information. Your personal data is kept private and used only for order fulfillment.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What if my GCash payment failed? <span class="arrow">▼</span></div>
+          <div class="faq-a">If your payment failed but the amount was deducted, it will automatically be refunded within 24–48 hours. Contact GCash support and also notify us at 09671756325.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I change payment method after ordering? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes, within 1 hour of placing your order. Contact us at 09671756325 as soon as possible and we'll update your payment method.</div>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="faq-group" id="sec-account">
+        <div class="faq-group-title">👤 ACCOUNT & PROFILE</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do I need an account to order? <span class="arrow">▼</span></div>
+          <div class="faq-a">You can browse and add to cart without an account, but you'll need to create one to complete checkout and track your orders. Registration is free and only takes 30 seconds!</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Will my account and cart be saved after closing the browser? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! Your account, cart, wishlist, and orders are all saved permanently in your browser's local storage. They will remain even after closing the browser or restarting your computer.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">I forgot my password. How do I reset it? <span class="arrow">▼</span></div>
+          <div class="faq-a">Go to <a href="profile.html#security">My Profile → Security</a>. Enter your current password (if you remember it) and set a new one. If you've completely forgotten your password, contact us at 09671756325 and we'll help you manually.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I update my delivery address? <span class="arrow">▼</span></div>
+          <div class="faq-a">Go to <a href="profile.html#address">My Profile → My Address</a> and update your address. This will be pre-filled next time you check out. You can also update it directly during checkout.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I delete my account? <span class="arrow">▼</span></div>
+          <div class="faq-a">Contact us at 09671756325 and request account deletion. We'll process it within 24 hours. Note that your order history will also be permanently deleted.</div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="faq-group" id="sec-products">
+        <div class="faq-group-title">🎮 PRODUCTS & AUTHENTICITY</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Are all products 100% authentic? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! We guarantee that all products sold in John Rey's NexGen Shop are 100% authentic and officially licensed. Pokémon figures are licensed by Nintendo/Game Freak. Electronics come from authorized distributors.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do products come with warranty? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! All electronics come with a 1-year warranty. Pokémon figures include a 6-month warranty against manufacturing defects. Warranty is handled through our shop — just contact us at 09671756325.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I request a specific product not listed? <span class="arrow">▼</span></div>
+          <div class="faq-a">Absolutely! Message us at 09671756325 with your product request. If it's something we can source, we'll get it for you — often at competitive prices.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I know which variation to choose? <span class="arrow">▼</span></div>
+          <div class="faq-a">Each product page shows all available variations. Click on a variation to select it. If you're unsure which variation is right for you, contact us at 09671756325 and we'll guide you!</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do Pokémon figures come with original packaging? <span class="arrow">▼</span></div>
+          <div class="faq-a">Yes! All Pokémon figures come in their original retail boxes with authentic branding. They make great gifts or display items for collectors.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Are prices negotiable? <span class="arrow">▼</span></div>
+          <div class="faq-a">Prices on the website are fixed. However, for bulk orders of 5+ units of the same item, contact us for a special group discount!</div>
+        </div>
+      </div>
+
+      <!-- COUPONS -->
+      <div class="faq-group" id="sec-coupons-sec">
+        <div class="faq-group-title">🎟️ COUPONS & DISCOUNTS</div>
+
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I use a coupon code? <span class="arrow">▼</span></div>
+          <div class="faq-a">Add items to your cart, then enter your coupon code in the "Coupon Code" box in your cart and click Apply. The discount will be deducted from your total automatically.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Where can I find available coupon codes? <span class="arrow">▼</span></div>
+          <div class="faq-a">Visit our <a href="coupons.html">Coupons page</a> to see all available codes. We also announce new promos via SMS — make sure your phone number is saved in your profile!</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I use multiple coupons in one order? <span class="arrow">▼</span></div>
+          <div class="faq-a">Only one coupon code can be applied per order. Choose the one that gives you the biggest discount for your specific order.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">My coupon code is not working. What should I do? <span class="arrow">▼</span></div>
+          <div class="faq-a">Make sure you're entering the code in all CAPS and that it's spelled correctly. Some codes have minimum order requirements. Check the <a href="coupons.html">Coupons page</a> for terms, or contact us at 09671756325.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTACT BANNER -->
+  <div class="contact-banner">
+    <div>
+      <h3>📞 STILL NEED HELP?</h3>
+      <p>Our support team is available Mon–Sat, 8AM to 8PM.</p>
+    </div>
+    <div class="contact-methods">
+      <button class="contact-btn" onclick="window.open('sms:09671756325')">📱 SMS: 09671756325</button>
+      <button class="contact-btn" onclick="window.open('tel:09671756325')">📞 Call Us</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div>
+      <p>Your one-stop shop for Pokémon collectibles, electronics, fashion, food, and more!</p>
+    </div>
+    <div class="footer-col"><h4>Shop</h4><a href="products.html">All Products</a><a href="products.html?cat=pokemon">Pokémon</a><a href="deals.html">Deals</a></div>
+    <div class="footer-col"><h4>Account</h4><a href="profile.html">Profile</a><a href="cart.html">Cart</a><a href="wishlist.html">Wishlist</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="faq.html">FAQ</a><a href="about.html">About Us</a><a href="coupons.html">Coupons</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 John Rey's NexGen Shop. All rights reserved.</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  const navUser = Auth.getUser();
+  if (navUser) document.getElementById("nav-user-label").textContent = navUser.name.split(" ")[0];
+
+  function toggleFaq(el) {
+    const ans = el.nextElementSibling;
+    const isOpen = ans.classList.contains("open");
+    // Close all
+    document.querySelectorAll(".faq-q").forEach(q => { q.classList.remove("open"); q.nextElementSibling.classList.remove("open"); });
+    if (!isOpen) { el.classList.add("open"); ans.classList.add("open"); }
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById("sec-" + id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function searchFaq() {
+    const q = document.getElementById("faqSearch").value.toLowerCase().trim();
+    const items = document.querySelectorAll(".faq-item");
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = (!q || text.includes(q)) ? "block" : "none";
+    });
+    document.querySelectorAll(".faq-group").forEach(group => {
+      const visible = [...group.querySelectorAll(".faq-item")].some(i => i.style.display !== "none");
+      group.style.display = visible ? "block" : "none";
+    });
+  }
+</script>
+</body>
+</html>

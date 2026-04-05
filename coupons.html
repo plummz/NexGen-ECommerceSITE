@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coupons — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .coupons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 16px; margin-bottom: 40px; }
+    .coupon-card {
+      background: var(--dark2);
+      border: 1px dashed var(--red);
+      border-radius: 12px; overflow: hidden;
+      display: flex;
+    }
+    .coupon-left {
+      background: var(--red); width: 100px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 16px 8px; text-align: center;
+    }
+    .coupon-left .coup-icon { font-size: 32px; margin-bottom: 6px; }
+    .coupon-left .coup-val {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 12px; color: var(--gold); line-height: 1.4;
+    }
+    .coupon-right { flex: 1; padding: 16px; }
+    .coupon-code {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 13px; color: var(--gold);
+      background: var(--dark); border: 1px dashed var(--gold);
+      border-radius: 4px; padding: 6px 12px;
+      display: inline-block; margin-bottom: 8px;
+      letter-spacing: 2px; cursor: pointer;
+    }
+    .coupon-code:hover { background: var(--dark4); }
+    .coupon-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.6; }
+    .coupon-expiry { font-size: 11px; color: #555577; }
+    .coupon-copy-btn {
+      font-size: 11px; background: transparent;
+      border: 1px solid var(--red); color: var(--red);
+      padding: 4px 10px; border-radius: 4px; cursor: pointer;
+      margin-top: 8px;
+    }
+    .coupon-copy-btn:hover { background: var(--red); color: white; }
+
+    .test-box {
+      background: var(--dark2); border: 1px solid var(--dark4);
+      border-radius: 12px; padding: 24px; margin-bottom: 30px;
+    }
+    .test-row { display: flex; gap: 12px; align-items: flex-start; }
+    .test-input { flex: 1; background: var(--dark4); border: 1px solid var(--dark4); color: var(--text); padding: 12px 16px; font-size: 15px; border-radius: var(--radius); outline: none; letter-spacing: 2px; font-weight: bold; }
+    .test-input:focus { border-color: var(--gold); }
+    .test-result { margin-top: 12px; font-size: 14px; padding: 12px; border-radius: var(--radius); }
+    .result-ok { background: rgba(34,204,102,0.1); border: 1px solid #22cc66; color: #22cc66; }
+    .result-err { background: rgba(204,0,0,0.1); border: 1px solid var(--red); color: var(--red); }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">🎟️ USE THESE COUPONS FOR EXTRA SAVINGS! &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" placeholder="Search products..." onkeydown="if(event.key==='Enter'){location.href='products.html?q='+encodeURIComponent(this.value)}"/>
+    <button>🔍</button>
+  </div>
+  <div class="nav-icons">
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html" class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html" class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <span>Coupons & Deals</span></div>
+  <div style="font-family:'Press Start 2P',sans-serif;font-size:14px;color:var(--gold);margin-bottom:6px">🎟️ COUPONS & DISCOUNTS</div>
+  <p style="font-size:13px;color:var(--text-dim);margin-bottom:24px">Copy any code below and use it at checkout or in your cart!</p>
+
+  <!-- TEST BOX -->
+  <div class="test-box">
+    <div style="font-family:'Press Start 2P',sans-serif;font-size:11px;color:var(--gold);margin-bottom:14px">✅ TEST YOUR COUPON CODE</div>
+    <div class="test-row">
+      <input class="test-input" type="text" id="testCode" placeholder="ENTER CODE HERE" oninput="this.value=this.value.toUpperCase()"/>
+      <button class="btn-primary" style="padding:12px 24px" onclick="testCoupon()">Test Code</button>
+    </div>
+    <div id="testResult" style="display:none" class="test-result"></div>
+    <button class="btn-primary" style="margin-top:12px;display:none" id="goCartBtn" onclick="useCoupon()">🛒 Use in Cart Now</button>
+  </div>
+
+  <!-- COUPON CARDS -->
+  <div class="coupons-grid" id="couponsGrid"></div>
+
+  <!-- HOW TO USE -->
+  <div class="panel">
+    <div class="panel-title">❓ HOW TO USE COUPONS</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:20px;text-align:center">
+      <div><div style="font-size:36px;margin-bottom:8px">1️⃣</div><div style="font-size:13px;color:var(--text-dim)">Copy the coupon code above</div></div>
+      <div><div style="font-size:36px;margin-bottom:8px">2️⃣</div><div style="font-size:13px;color:var(--text-dim)">Add items to your cart</div></div>
+      <div><div style="font-size:36px;margin-bottom:8px">3️⃣</div><div style="font-size:13px;color:var(--text-dim)">Paste the code in the coupon box</div></div>
+      <div><div style="font-size:36px;margin-bottom:8px">4️⃣</div><div style="font-size:13px;color:var(--text-dim)">Click Apply & enjoy your discount!</div></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div><p>Your one-stop shop!</p></div>
+    <div class="footer-col"><h4>Shop</h4><a href="products.html">All Products</a></div>
+    <div class="footer-col"><h4>Account</h4><a href="profile.html">Profile</a><a href="cart.html">Cart</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="#">FAQ</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  const navUser = Auth.getUser();
+  if (navUser) document.getElementById("nav-user-label").textContent = navUser.name.split(" ")[0];
+
+  const couponDefs = [
+    { code:"NEXGEN10",  icon:"🎉", val:"10% OFF",      desc:"10% off your entire order. No minimum purchase required!", expiry:"Valid until Dec 31, 2025", type:"percent" },
+    { code:"NEXGEN20",  icon:"🔥", val:"20% OFF",      desc:"Get 20% off your order. Big savings!", expiry:"Valid until Dec 31, 2025", type:"percent" },
+    { code:"SAVE100",   icon:"💯", val:"₱100 OFF",     desc:"₱100 off any order. No minimum!", expiry:"Valid until Dec 31, 2025", type:"fixed" },
+    { code:"SAVE500",   icon:"💰", val:"₱500 OFF",     desc:"₱500 off orders worth ₱2,000 and above.", expiry:"Min. order: ₱2,000", type:"fixed" },
+    { code:"POKEMON15", icon:"🎮", val:"15% OFF",      desc:"15% off all Pokémon figure orders. Gotta save em all!", expiry:"Pokémon category only", type:"percent" },
+    { code:"FREESHIP",  icon:"🚚", val:"FREE SHIP",    desc:"Free shipping on any order regardless of total.", expiry:"Valid until Dec 31, 2025", type:"freeship" },
+    { code:"WELCOME50", icon:"👋", val:"₱50 OFF",      desc:"Welcome discount for new shoppers! ₱50 off your first order.", expiry:"New customers only", type:"fixed" },
+    { code:"FLASH30",   icon:"⚡", val:"30% OFF",      desc:"Flash sale coupon! 30% off your entire order. Limited time only!", expiry:"While supplies last", type:"percent" },
+  ];
+
+  function buildCoupons() {
+    const el = document.getElementById("couponsGrid");
+    el.innerHTML = couponDefs.map(c => `
+      <div class="coupon-card">
+        <div class="coupon-left">
+          <div class="coup-icon">${c.icon}</div>
+          <div class="coup-val">${c.val}</div>
+        </div>
+        <div class="coupon-right">
+          <div class="coupon-code" onclick="copyCode('${c.code}', this)" title="Click to copy">${c.code}</div>
+          <div class="coupon-desc">${c.desc}</div>
+          <div class="coupon-expiry">⏰ ${c.expiry}</div>
+          <button class="coupon-copy-btn" onclick="copyCode('${c.code}', this)">📋 Copy Code</button>
+        </div>
+      </div>`).join("");
+  }
+
+  function copyCode(code, el) {
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = el.textContent;
+      el.textContent = "✅ Copied!";
+      setTimeout(() => el.textContent = orig, 1500);
+    }).catch(() => {
+      document.getElementById("testCode").value = code;
+      showToast("Code copied to test box!");
+    });
+    showToast(`Code "${code}" copied!`);
+  }
+
+  let lastResult = null;
+  function testCoupon() {
+    const code = document.getElementById("testCode").value.trim();
+    const result = document.getElementById("testResult");
+    const btn = document.getElementById("goCartBtn");
+    result.style.display = "block";
+    if (!code) { result.className="test-result result-err"; result.textContent="Please enter a coupon code."; btn.style.display="none"; return; }
+    const res = Store.applyCoupon(code, 999999);
+    lastResult = { code, ...res };
+    if (res.valid) {
+      result.className = "test-result result-ok";
+      result.innerHTML = `✅ Valid coupon! <strong>${res.msg}</strong>${res.discount ? ` — Saves you ₱${res.discount.toLocaleString()} or more!` : ""}`;
+      btn.style.display = "inline-block";
+    } else {
+      result.className = "test-result result-err";
+      result.innerHTML = `❌ ${res.msg}`;
+      btn.style.display = "none";
+    }
+  }
+
+  function useCoupon() {
+    if (lastResult?.valid) {
+      localStorage.setItem("nexgen_coupon", JSON.stringify(lastResult));
+      location.href = "cart.html";
+    }
+  }
+
+  buildCoupons();
+</script>
+</body>
+</html>

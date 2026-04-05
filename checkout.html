@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .co-layout { display:flex; gap:24px; align-items:flex-start; }
+    .co-form { flex:1; min-width:0; }
+    .co-side { width:340px; flex-shrink:0; position:sticky; top:78px; }
+    .sec-head { font-family:'Press Start 2P',sans-serif; font-size:11px; color:var(--gold); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--dark4); letter-spacing:1px; }
+    .pay-opt { display:flex; align-items:center; gap:12px; background:var(--dark4); border:1px solid var(--dark4); border-radius:var(--radius); padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:all .2s; }
+    .pay-opt:hover { border-color:var(--red); }
+    .pay-opt.sel { border-color:var(--red); background:rgba(204,0,0,.1); }
+    .pay-opt input { accent-color:var(--red); width:18px; height:18px; flex-shrink:0; }
+    .pay-icon { font-size:22px; }
+    .pay-label { font-weight:600; font-size:14px; }
+    .pay-sub { font-size:12px; color:var(--dim); margin-top:2px; }
+    .ord-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--dark4); align-items:center; }
+    .ord-item:last-child { border-bottom:none; }
+    .oi-img { width:50px; height:50px; background:var(--dark); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; overflow:hidden; }
+    .oi-img img { max-width:100%; max-height:100%; object-fit:contain; }
+    .sum-row { display:flex; justify-content:space-between; font-size:14px; padding:8px 0; color:var(--dim); }
+    .sum-total { display:flex; justify-content:space-between; font-size:18px; font-weight:bold; padding-top:12px; margin-top:8px; border-top:2px solid var(--red); }
+    .progress { display:flex; align-items:center; margin-bottom:28px; }
+    .p-step { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; position:relative; }
+    .p-dot { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:bold; border:2px solid var(--dark4); background:var(--dark2); color:var(--dim); }
+    .p-dot.done { background:var(--green); border-color:var(--green); color:#fff; }
+    .p-dot.active { background:var(--red); border-color:var(--red); color:#fff; }
+    .p-lbl { font-size:11px; color:var(--dim); }
+    .p-line { flex:1; height:2px; background:var(--dark4); align-self:flex-start; margin-top:14px; }
+    @media(max-width:900px){
+      .co-layout { flex-direction:column; }
+      .co-side { width:100%; position:static; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">🔒 SECURE CHECKOUT &nbsp;•&nbsp; 100% Safe &amp; Encrypted &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div style="flex:1"></div>
+  <div class="nav-icons">
+    <a href="cart.html"    class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html" class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <a href="cart.html">Cart</a> › <span>Checkout</span></div>
+
+  <div class="progress">
+    <div class="p-step"><div class="p-dot done">✓</div><div class="p-lbl">Cart</div></div>
+    <div class="p-line"></div>
+    <div class="p-step"><div class="p-dot active">2</div><div class="p-lbl">Checkout</div></div>
+    <div class="p-line"></div>
+    <div class="p-step"><div class="p-dot">3</div><div class="p-lbl">Confirm</div></div>
+  </div>
+
+  <div class="co-layout">
+
+    <!-- FORM -->
+    <div class="co-form">
+      <div class="panel" style="margin-bottom:16px">
+        <div class="sec-head">👤 CONTACT INFORMATION</div>
+        <div class="form-row">
+          <div class="form-group"><label>First Name *</label><input class="form-control" id="fname" placeholder="Juan"/></div>
+          <div class="form-group"><label>Last Name *</label><input class="form-control" id="lname" placeholder="Dela Cruz"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone Number *</label><input class="form-control" id="phone" placeholder="09XX XXX XXXX"/></div>
+          <div class="form-group"><label>Email (optional)</label><input class="form-control" id="email" type="email" placeholder="juan@email.com"/></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:16px">
+        <div class="sec-head">🏠 DELIVERY ADDRESS</div>
+        <div class="form-group">
+          <label>Region / Province *</label>
+          <select class="form-control" id="region">
+            <option value="">-- Select Region --</option>
+            <option>Metro Manila (NCR)</option><option>Region I — Ilocos</option>
+            <option>Region II — Cagayan Valley</option><option>Region III — Central Luzon</option>
+            <option>Region IV-A — CALABARZON</option><option>Region IV-B — MIMAROPA</option>
+            <option>Region V — Bicol</option><option>Region VI — Western Visayas</option>
+            <option>Region VII — Central Visayas</option><option>Region VIII — Eastern Visayas</option>
+            <option>Region IX — Zamboanga Peninsula</option><option>Region X — Northern Mindanao</option>
+            <option>Region XI — Davao</option><option>Region XII — SOCCSKSARGEN</option>
+            <option>Region XIII — Caraga</option><option>CAR</option><option>BARMM</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>City / Municipality *</label><input class="form-control" id="city" placeholder="e.g. Iloilo City"/></div>
+          <div class="form-group"><label>Barangay</label><input class="form-control" id="barangay" placeholder="e.g. Brgy. San Jose"/></div>
+        </div>
+        <div class="form-group"><label>House No. / Street / Building *</label><textarea class="form-control" id="address" rows="2" placeholder="Complete address, landmark..."></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Zip Code</label><input class="form-control" id="zip" placeholder="e.g. 5000"/></div>
+          <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:0">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--dim)">
+              <input type="checkbox" id="saveAddr" style="accent-color:var(--red)"> Save to my profile
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:16px">
+        <div class="sec-head">💳 PAYMENT METHOD</div>
+        <div class="pay-opt sel" onclick="selPay(this,'cod')">
+          <input type="radio" name="pay" value="cod" checked>
+          <span class="pay-icon">💵</span>
+          <div><div class="pay-label">Cash on Delivery (COD)</div><div class="pay-sub">Pay when your order arrives</div></div>
+        </div>
+        <div class="pay-opt" onclick="selPay(this,'gcash')">
+          <input type="radio" name="pay" value="gcash">
+          <span class="pay-icon">📱</span>
+          <div><div class="pay-label">GCash</div><div class="pay-sub">Send to 09671756325 — Juan Rey</div></div>
+        </div>
+        <div class="pay-opt" onclick="selPay(this,'maya')">
+          <input type="radio" name="pay" value="maya">
+          <span class="pay-icon">📲</span>
+          <div><div class="pay-label">Maya (PayMaya)</div><div class="pay-sub">Send to 09671756325</div></div>
+        </div>
+        <div class="pay-opt" onclick="selPay(this,'bank')">
+          <input type="radio" name="pay" value="bank">
+          <span class="pay-icon">🏦</span>
+          <div><div class="pay-label">Bank Transfer</div><div class="pay-sub">BDO / BPI / UnionBank</div></div>
+        </div>
+        <div class="pay-opt" onclick="selPay(this,'instl')">
+          <input type="radio" name="pay" value="instl">
+          <span class="pay-icon">📋</span>
+          <div><div class="pay-label">Installment (3 months)</div><div class="pay-sub">via NexGenPay — 0% interest</div></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:16px">
+        <div class="sec-head">📝 ORDER NOTES (OPTIONAL)</div>
+        <textarea class="form-control" id="notes" rows="3" placeholder="Special instructions, preferred delivery time, etc..."></textarea>
+      </div>
+
+      <button class="btn-primary w-full" style="padding:16px;font-size:16px" onclick="placeOrder()">⚡ PLACE ORDER NOW</button>
+      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--dim)">🔒 Your information is safe and encrypted</div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="co-side">
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-title">🧾 ORDER SUMMARY</div>
+        <div id="ordItems"></div>
+        <hr class="divider"/>
+        <div class="sum-row"><span>Subtotal</span><span id="s-sub">₱0</span></div>
+        <div class="sum-row"><span>Shipping</span><span id="s-ship">₱0</span></div>
+        <div class="sum-row" id="s-cp-row" style="display:none"><span>Coupon</span><span id="s-cp" style="color:#22cc66">-₱0</span></div>
+        <div class="sum-total"><span>TOTAL</span><span id="s-tot" style="color:var(--red)">₱0</span></div>
+      </div>
+      <div class="panel" style="font-size:13px;color:var(--dim);line-height:2.1">
+        ✅ 100% Money Back Guarantee<br>
+        🚚 Free shipping on ₱500+<br>
+        🔄 15-day hassle-free returns<br>
+        💬 Support: 09671756325
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-bottom" style="padding:20px 40px"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  const cart = Store.getCart();
+  if (!cart.length) location.href = "cart.html";
+
+  const cp   = JSON.parse(localStorage.getItem("nexgen_coupon") || "null");
+  const sub  = Store.getCartTotal();
+  const ship = sub >= 500 ? 0 : 80;
+  const cpD  = cp ? cp.discount : 0;
+  const tot  = Math.max(0, sub - cpD + ship);
+
+  document.getElementById("s-sub").textContent  = formatPrice(sub);
+  document.getElementById("s-ship").textContent = ship===0 ? "FREE ✅" : formatPrice(ship);
+  document.getElementById("s-tot").textContent  = formatPrice(tot);
+  if (cpD) { document.getElementById("s-cp-row").style.display="flex"; document.getElementById("s-cp").textContent="-"+formatPrice(cpD); }
+
+  document.getElementById("ordItems").innerHTML = cart.map(item =>
+    `<div class="ord-item">
+       <div class="oi-img">${item.image?`<img src="${item.image}" onerror="this.style.display='none'">`:""}
+         <span style="${item.image?"display:none":""}">${productEmoji(item.category)}</span></div>
+       <div style="flex:1;font-size:13px">${item.name}<br><span style="color:var(--dim);font-size:11px">${item.variation} × ${item.qty}</span></div>
+       <div style="color:var(--red);font-weight:bold;white-space:nowrap">${formatPrice(item.price*item.qty)}</div>
+     </div>`
+  ).join("");
+
+  // Pre-fill from profile
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById("nav-user-label").textContent = user.name.split(" ")[0];
+    const parts = user.name.split(" ");
+    document.getElementById("fname").value = parts[0] || "";
+    document.getElementById("lname").value = parts.slice(1).join(" ") || "";
+    document.getElementById("phone").value = user.phone || "";
+    document.getElementById("email").value = user.email || "";
+    if (user.address) document.getElementById("address").value = user.address;
+  }
+
+  function selPay(el, val) {
+    document.querySelectorAll(".pay-opt").forEach(o => { o.classList.remove("sel"); o.querySelector("input").checked=false; });
+    el.classList.add("sel"); el.querySelector("input").checked=true;
+  }
+
+  function placeOrder() {
+    const fname  = document.getElementById("fname").value.trim();
+    const lname  = document.getElementById("lname").value.trim();
+    const phone  = document.getElementById("phone").value.trim();
+    const region = document.getElementById("region").value;
+    const city   = document.getElementById("city").value.trim();
+    const address= document.getElementById("address").value.trim();
+    const pay    = document.querySelector('input[name="pay"]:checked')?.value;
+
+    if (!fname||!lname||!phone||!region||!city||!address) { showToast("Please fill all required fields.","error"); return; }
+    if (!/^(09|\+639)\d{9}$/.test(phone)) { showToast("Enter a valid PH phone number.","error"); return; }
+
+    if (document.getElementById("saveAddr").checked && user) Auth.updateProfile({ address, phone });
+
+    const order = {
+      id:      "NXG-" + Date.now().toString(36).toUpperCase(),
+      date:    new Date().toLocaleDateString("en-PH",{year:"numeric",month:"long",day:"numeric"}),
+      time:    new Date().toLocaleTimeString("en-PH"),
+      items:   cart, sub, ship, cpD, tot,
+      payment: pay,
+      name:    fname+" "+lname,
+      phone, region, city,
+      barangay: document.getElementById("barangay").value,
+      address, zip: document.getElementById("zip").value,
+      notes:   document.getElementById("notes").value,
+      status:  "Order Placed",
+      coupon:  cp?.code || null,
+    };
+
+    Store.saveOrder(order);
+    Store.clearCart();
+    localStorage.removeItem("nexgen_coupon");
+    localStorage.setItem("nexgen_last_order", JSON.stringify(order));
+    location.href = "order-confirm.html";
+  }
+</script>
+</body>
+</html>
+

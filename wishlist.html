@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wishlist — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="announce-bar">♡ YOUR WISHLIST &nbsp;•&nbsp; Save items you love &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" placeholder="Search products..." onkeydown="if(event.key==='Enter'){location.href='products.html?q='+encodeURIComponent(this.value)}"/>
+    <button>🔍</button>
+  </div>
+  <div class="nav-icons">
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html" class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html" class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <span>My Wishlist</span></div>
+  <div class="section-header">
+    <div class="section-title">♡ MY WISHLIST</div>
+    <div id="wishCount" style="font-size:13px;color:var(--text-dim)"></div>
+  </div>
+  <div class="products-grid" id="wishGrid"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div><p>Your one-stop shop!</p></div>
+    <div class="footer-col"><h4>Shop</h4><a href="products.html">All Products</a></div>
+    <div class="footer-col"><h4>Account</h4><a href="profile.html">Profile</a><a href="cart.html">Cart</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="#">FAQ</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  const navUser = Auth.getUser();
+  if (navUser) document.getElementById("nav-user-label").textContent = navUser.name.split(" ")[0];
+
+  function renderWishlist() {
+    const wl = Store.getWishlist();
+    const el = document.getElementById("wishGrid");
+    const count = document.getElementById("wishCount");
+    if (!wl.length) {
+      el.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">♡</div><h3>WISHLIST EMPTY</h3><p>Save items you love by clicking the ♡ on any product!</p><button class="btn-primary" onclick="location.href='products.html'">Browse Products</button></div>`;
+      if (count) count.textContent = "0 items";
+      return;
+    }
+    const products = wl.map(id => Store.getProduct(id)).filter(Boolean);
+    if (count) count.textContent = `${products.length} item${products.length!==1?"s":""}`;
+    el.innerHTML = products.map(p => buildProductCard(p)).join("");
+  }
+
+  renderWishlist();
+</script>
+</body>
+</html>

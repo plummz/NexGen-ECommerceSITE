@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Confirmed — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .confirm-card {
+      max-width: 700px; margin: 40px auto;
+      background: var(--dark2); border: 2px solid var(--green);
+      border-radius: 14px; padding: 36px; text-align: center;
+    }
+    .confirm-icon { font-size: 80px; margin-bottom: 16px; }
+    .confirm-title {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 18px; color: #22cc66; margin-bottom: 10px;
+    }
+    .order-id {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 12px; color: var(--gold); margin-bottom: 6px;
+    }
+    .confirm-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 30px; line-height: 1.8; }
+    .order-details {
+      background: var(--dark); border: 1px solid var(--dark4);
+      border-radius: 10px; padding: 20px; text-align: left; margin-bottom: 24px;
+    }
+    .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--dark4); font-size: 14px; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: var(--text-dim); }
+    .detail-val { color: var(--text); font-weight: 600; text-align: right; }
+    .status-timeline { display: flex; gap: 0; margin-bottom: 30px; }
+    .status-step { flex: 1; text-align: center; position: relative; }
+    .status-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; margin: 0 auto 6px;
+      border: 2px solid var(--dark4); background: var(--dark2); color: var(--text-dim);
+    }
+    .status-dot.active { border-color: var(--green); background: var(--green); color: white; }
+    .status-dot.pending { border-color: var(--gold); color: var(--gold); }
+    .status-label { font-size: 11px; color: var(--text-dim); }
+    .status-line { position: absolute; top: 13px; left: 50%; width: 100%; height: 2px; background: var(--dark4); z-index: 0; }
+    .status-step:last-child .status-line { display: none; }
+    .items-list { text-align: left; margin-bottom: 24px; }
+    .confirm-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--dark4); align-items: center; }
+    .confirm-item:last-child { border-bottom: none; }
+    .confirm-item-img { width: 50px; height: 50px; background: var(--dark); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .payment-instructions {
+      background: rgba(255,204,0,0.1); border: 1px solid var(--gold);
+      border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 24px;
+    }
+    .payment-instructions h4 { color: var(--gold); margin-bottom: 10px; font-size: 14px; }
+    .payment-instructions p { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">🎉 THANK YOU FOR YOUR ORDER! &nbsp;•&nbsp; We'll process it right away! &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div style="flex:1"></div>
+  <div class="nav-icons">
+    <a href="profile.html" class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Profile</span></a>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div id="confirmContent"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-bottom" style="padding:20px 60px"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  const order = JSON.parse(localStorage.getItem("nexgen_last_order") || "null");
+  const navUser = Auth.getUser();
+  if (navUser) document.getElementById("nav-user-label").textContent = navUser.name.split(" ")[0];
+
+  const payLabels = { cod:"Cash on Delivery", gcash:"GCash", maya:"Maya", bank:"Bank Transfer", instl:"Installment (3 months)" };
+
+  if (!order) {
+    document.getElementById("confirmContent").innerHTML = `
+      <div class="empty-state"><div class="empty-icon">❓</div><h3>NO ORDER FOUND</h3><p>You haven't placed an order yet.</p>
+      <button class="btn-primary" onclick="location.href='products.html'">Start Shopping</button></div>`;
+  } else {
+    const payInstructions = {
+      gcash: `Send ₱${order.total.toLocaleString()} to GCash number <strong>09671756325 (Juan Rey)</strong>.<br>Take a screenshot and send it via our chat or SMS.`,
+      maya: `Send ₱${order.total.toLocaleString()} to Maya number <strong>09671756325</strong>.<br>Screenshot your payment and send to us for confirmation.`,
+      bank: `Transfer ₱${order.total.toLocaleString()} to:<br><strong>BDO Savings — Account No: 001234567890 — Juan Rey</strong><br>Send your deposit slip or screenshot to us via SMS.`,
+      instl: `Your installment plan: ₱${Math.round(order.total/3).toLocaleString()} × 3 months. Our team will contact you within 24 hours to set up your plan.`,
+    };
+
+    document.getElementById("confirmContent").innerHTML = `
+      <div class="confirm-card">
+        <div class="confirm-icon">🎉</div>
+        <div class="confirm-title">ORDER PLACED!</div>
+        <div class="order-id">Order ID: ${order.id}</div>
+        <div class="confirm-sub">
+          Thank you, <strong>${order.name}</strong>! Your order has been received.<br>
+          Placed on ${order.date} at ${order.time}
+        </div>
+
+        <div class="status-timeline">
+          <div class="status-step">
+            <div class="status-dot active">✓</div>
+            <div class="status-label">Order Placed</div>
+            <div class="status-line"></div>
+          </div>
+          <div class="status-step">
+            <div class="status-dot pending">⏳</div>
+            <div class="status-label">Processing</div>
+            <div class="status-line"></div>
+          </div>
+          <div class="status-step">
+            <div class="status-dot">📦</div>
+            <div class="status-label">Packed</div>
+            <div class="status-line"></div>
+          </div>
+          <div class="status-step">
+            <div class="status-dot">🚚</div>
+            <div class="status-label">Shipped</div>
+            <div class="status-line"></div>
+          </div>
+          <div class="status-step">
+            <div class="status-dot">✅</div>
+            <div class="status-label">Delivered</div>
+          </div>
+        </div>
+
+        <div class="order-details">
+          <div class="detail-row"><span class="detail-label">Order ID</span><span class="detail-val">${order.id}</span></div>
+          <div class="detail-row"><span class="detail-label">Customer</span><span class="detail-val">${order.name}</span></div>
+          <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-val">${order.phone}</span></div>
+          <div class="detail-row"><span class="detail-label">Address</span><span class="detail-val">${order.address}, ${order.barangay ? order.barangay+', ':''} ${order.city}, ${order.region}</span></div>
+          <div class="detail-row"><span class="detail-label">Payment</span><span class="detail-val">${payLabels[order.payment] || order.payment}</span></div>
+          ${order.coupon ? `<div class="detail-row"><span class="detail-label">Coupon Used</span><span class="detail-val" style="color:var(--gold)">${order.coupon}</span></div>` : ""}
+          <div class="detail-row"><span class="detail-label">Subtotal</span><span class="detail-val">${formatPrice(order.subtotal)}</span></div>
+          <div class="detail-row"><span class="detail-label">Shipping</span><span class="detail-val" style="color:#22cc66">${order.shipping===0?"FREE":formatPrice(order.shipping)}</span></div>
+          ${order.couponDisc ? `<div class="detail-row"><span class="detail-label">Discount</span><span class="detail-val" style="color:#22cc66">-${formatPrice(order.couponDisc)}</span></div>` : ""}
+          <div class="detail-row" style="font-weight:bold;font-size:16px"><span class="detail-label" style="color:var(--text)">TOTAL</span><span class="detail-val" style="color:var(--red)">${formatPrice(order.total)}</span></div>
+          ${order.notes ? `<div class="detail-row"><span class="detail-label">Notes</span><span class="detail-val">${order.notes}</span></div>` : ""}
+        </div>
+
+        <div class="items-list">
+          <div style="font-family:'Press Start 2P',sans-serif;font-size:10px;color:var(--gold);margin-bottom:12px">📦 YOUR ITEMS</div>
+          ${order.items.map(item => `
+            <div class="confirm-item">
+              <div class="confirm-item-img">${item.image ? `<img src="${item.image}" style="max-width:100%;object-fit:contain" onerror="this.style.display='none'">` : productEmoji(item.category)}</div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600">${item.name}</div>
+                <div style="font-size:12px;color:var(--text-dim)">${item.variation} × ${item.qty}</div>
+              </div>
+              <div style="color:var(--red);font-weight:bold">${formatPrice(item.price * item.qty)}</div>
+            </div>`).join("")}
+        </div>
+
+        ${order.payment !== "cod" ? `
+        <div class="payment-instructions">
+          <h4>💳 Payment Instructions</h4>
+          <p>${payInstructions[order.payment] || ""}</p>
+        </div>` : `
+        <div class="payment-instructions" style="background:rgba(34,204,102,0.1);border-color:#22cc66">
+          <h4 style="color:#22cc66">💵 Cash on Delivery</h4>
+          <p>Prepare <strong>₱${order.total.toLocaleString()}</strong> upon delivery. Our rider will collect the payment when your order arrives!</p>
+        </div>`}
+
+        <div style="font-size:13px;color:var(--text-dim);margin-bottom:24px;line-height:1.8">
+          📱 Questions? Call or text us: <strong style="color:var(--gold)">09671756325</strong><br>
+          Estimated delivery: <strong>3–7 business days</strong>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:center">
+          <button class="btn-primary" onclick="location.href='profile.html#orders'">📋 View My Orders</button>
+          <button class="btn-secondary" onclick="location.href='products.html'">🛍️ Continue Shopping</button>
+        </div>
+      </div>`;
+  }
+</script>
+</body>
+</html>

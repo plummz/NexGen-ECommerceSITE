@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="announce-bar">⚡ FREE SHIPPING on orders ₱500+ &nbsp;•&nbsp; COD AVAILABLE &nbsp;•&nbsp; 📱 09671756325 &nbsp;•&nbsp; Use code <strong>WELCOME50</strong> for ₱50 off!</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" id="searchInput" placeholder="Search products, brands, categories..."
+           onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button onclick="doSearch()">🔍 Search</button>
+  </div>
+  <div class="nav-icons">
+    <a href="deals.html"    class="nav-icon"><span class="icon">🔥</span><span>Deals</span></a>
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html"     class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html"  class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<div class="cat-nav" id="catNav"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="animemix.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🔥 MEGA SALE — UP TO 70% OFF</div>
+    <h1>JOHN REY'S <span>NEXGEN</span> SHOP</h1>
+    <p>Pokémon figures, electronics, fashion &amp; more — all in one place!</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="location.href='products.html'">🛍️ Shop Now</button>
+      <button class="btn-secondary" onclick="location.href='deals.html'">⚡ Flash Deals</button>
+      <button class="btn-secondary" onclick="location.href='coupons.html'">🎟️ Coupons</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROMO STRIP -->
+<div class="promo-strip">
+  <div class="promo-item"><span class="icon">🚚</span><div><strong>Free Shipping</strong><br>Orders ₱500+</div></div>
+  <div class="promo-item"><span class="icon">✅</span><div><strong>100% Authentic</strong><br>Guaranteed</div></div>
+  <div class="promo-item"><span class="icon">🔄</span><div><strong>15-Day Returns</strong><br>Hassle-free</div></div>
+  <div class="promo-item"><span class="icon">🛡️</span><div><strong>Secure Checkout</strong><br>COD &amp; GCash</div></div>
+  <div class="promo-item"><span class="icon">📱</span><div><strong>Support</strong><br>09671756325</div></div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- CATEGORIES -->
+  <div class="sec-header">
+    <div class="sec-title">🏪 SHOP BY CATEGORY</div>
+    <a href="products.html" class="sec-link">View All →</a>
+  </div>
+  <div class="cats-row" id="catCards"></div>
+
+  <hr class="divider" style="margin:30px 0">
+
+  <!-- FLASH SALE -->
+  <div class="flash-banner">
+    <div class="flash-left">
+      <h2>⚡ FLASH SALE</h2>
+      <p>Massive discounts — ends tonight at midnight!</p>
+    </div>
+    <div class="flash-timer">
+      <div class="timer-block"><span class="tnum" id="t-h">--</span><div class="tlbl">HRS</div></div>
+      <span class="timer-sep">:</span>
+      <div class="timer-block"><span class="tnum" id="t-m">--</span><div class="tlbl">MIN</div></div>
+      <span class="timer-sep">:</span>
+      <div class="timer-block"><span class="tnum" id="t-s">--</span><div class="tlbl">SEC</div></div>
+    </div>
+  </div>
+
+  <!-- FEATURED -->
+  <div class="sec-header">
+    <div class="sec-title">🔥 FEATURED PRODUCTS</div>
+    <a href="products.html" class="sec-link">View All →</a>
+  </div>
+  <div class="products-grid" id="featuredGrid"></div>
+
+  <hr class="divider" style="margin:30px 0">
+
+  <!-- POKÉMON -->
+  <div class="sec-header">
+    <div class="sec-title">🎮 POKÉMON FIGURES</div>
+    <a href="products.html?cat=pokemon" class="sec-link">View All →</a>
+  </div>
+  <div class="products-grid" id="pokemonGrid"></div>
+
+  <hr class="divider" style="margin:30px 0">
+
+  <!-- ELECTRONICS -->
+  <div class="sec-header">
+    <div class="sec-title">💻 ELECTRONICS</div>
+    <a href="products.html?cat=phones" class="sec-link">View All →</a>
+  </div>
+  <div class="products-grid" id="techGrid"></div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div>
+      <p>Your one-stop Filipino shop for Pokémon collectibles, electronics, fashion, food, and more. Trusted by thousands nationwide!</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a href="products.html?cat=pokemon">Pokémon Figures</a>
+      <a href="products.html?cat=phones">Phones</a>
+      <a href="products.html?cat=laptops">Laptops</a>
+      <a href="products.html?cat=gaming">Gaming</a>
+      <a href="deals.html">Flash Deals</a>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <a href="profile.html">My Profile</a>
+      <a href="cart.html">My Cart</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="profile.html#orders">My Orders</a>
+      <a href="coupons.html">Coupons</a>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About Us</a>
+      <a href="faq.html#sec-shipping">Shipping Info</a>
+      <a href="faq.html#sec-returns">Return Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 John Rey's NexGen Shop. All rights reserved.</span>
+    <span>📱 09671756325 &nbsp;•&nbsp; Mon–Sat 8AM–8PM</span>
+  </div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  // Category nav
+  document.getElementById("catNav").innerHTML = CATEGORIES.map(c =>
+    `<a class="cat-link" href="products.html?cat=${c.id}">${c.icon} ${c.label}</a>`
+  ).join("");
+
+  // Category cards
+  document.getElementById("catCards").innerHTML = CATEGORIES
+    .filter(c => c.id !== "all")
+    .map(c => `<a class="cat-card" href="products.html?cat=${c.id}">
+      <span class="cc-icon">${c.icon}</span>
+      <span class="cc-name">${c.label}</span>
+    </a>`).join("");
+
+  // Product grids
+  function fillGrid(id, products, limit) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = products.slice(0, limit).map(p => buildProductCard(p)).join("");
+  }
+  fillGrid("featuredGrid", Store.getFeatured(), 8);
+  fillGrid("pokemonGrid",  Store.getByCategory("pokemon"), 8);
+  fillGrid("techGrid", [
+    ...Store.getByCategory("phones"),
+    ...Store.getByCategory("laptops"),
+    ...Store.getByCategory("headphones"),
+  ].slice(0, 8), 8);
+
+  // Countdown timer
+  function tick() {
+    const now = new Date(), mid = new Date(now);
+    mid.setHours(24, 0, 0, 0);
+    let d = Math.floor((mid - now) / 1000);
+    const h = Math.floor(d / 3600); d %= 3600;
+    const m = Math.floor(d / 60); const s = d % 60;
+    const pad = n => String(n).padStart(2, "0");
+    ["t-h","t-m","t-s"].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = pad([h,m,s][i]);
+    });
+  }
+  tick(); setInterval(tick, 1000);
+
+  function doSearch() {
+    const q = document.getElementById("searchInput").value.trim();
+    if (q) location.href = "products.html?q=" + encodeURIComponent(q);
+  }
+</script>
+</body>
+</html>

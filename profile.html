@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile — John Rey's NexGen Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .auth-card { max-width: 460px; margin: 40px auto; }
+    .auth-tabs { display: flex; margin-bottom: 24px; }
+    .auth-tab {
+      flex: 1; padding: 12px; text-align: center;
+      font-family: 'Press Start 2P', sans-serif; font-size: 10px;
+      background: var(--dark2); color: var(--text-dim); cursor: pointer;
+      border: 1px solid var(--dark4); transition: all 0.2s;
+    }
+    .auth-tab:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+    .auth-tab:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+    .auth-tab.active { background: var(--red); border-color: var(--red); color: white; }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .profile-layout { display: flex; gap: 24px; align-items: flex-start; }
+    .profile-sidebar { width: 240px; flex-shrink: 0; }
+    .profile-main { flex: 1; }
+    .profile-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--red); display: flex; align-items: center;
+      justify-content: center; font-family: 'Press Start 2P', sans-serif;
+      font-size: 28px; color: white; margin-bottom: 12px;
+    }
+    .profile-name { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
+    .profile-email { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+    .profile-menu { list-style: none; }
+    .profile-menu li a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; font-size: 14px;
+      color: var(--text-dim); border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+    .profile-menu li a:hover, .profile-menu li a.active { background: var(--dark2); color: var(--gold); }
+    .profile-section { display: none; }
+    .profile-section.active { display: block; }
+    .order-card {
+      background: var(--dark2); border: 1px solid var(--dark4);
+      border-radius: 10px; padding: 16px; margin-bottom: 12px;
+    }
+    .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+    .order-id { font-family: 'Press Start 2P', sans-serif; font-size: 10px; color: var(--gold); }
+    .order-status { font-size: 12px; font-weight: bold; padding: 3px 10px; border-radius: 20px; }
+    .status-placed { background: rgba(34,102,204,0.2); color: #6699ff; border: 1px solid #6699ff; }
+    .order-date { font-size: 12px; color: var(--text-dim); }
+    .order-total { font-size: 16px; font-weight: bold; color: var(--red); }
+    .order-items-preview { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .order-item-chip {
+      font-size: 11px; color: var(--text-dim);
+      background: var(--dark); border-radius: 4px;
+      padding: 3px 8px;
+    }
+    .success-msg { background: rgba(34,204,102,0.1); border: 1px solid #22cc66; color: #22cc66; padding: 10px 16px; border-radius: var(--radius); margin-bottom: 12px; font-size: 13px; }
+    .error-msg { background: rgba(204,0,0,0.1); border: 1px solid var(--red); color: var(--red); padding: 10px 16px; border-radius: var(--radius); margin-bottom: 12px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="announce-bar">👤 MANAGE YOUR ACCOUNT &nbsp;•&nbsp; Your info is saved locally &nbsp;•&nbsp; 📱 09671756325</div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">JOHN REY'S <span>NEXGEN</span></a>
+  <div class="nav-search">
+    <input type="text" placeholder="Search products..." onkeydown="if(event.key==='Enter'){location.href='products.html?q='+encodeURIComponent(this.value)}"/>
+    <button>🔍</button>
+  </div>
+  <div class="nav-icons">
+    <a href="wishlist.html" class="nav-icon"><span class="icon">♡</span><span>Wishlist</span></a>
+    <a href="cart.html" class="nav-icon"><span class="icon">🛒</span><div id="cart-badge"></div><span>Cart</span></a>
+    <a href="profile.html" class="nav-icon"><span class="icon">👤</span><span id="nav-user-label">Login</span></a>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <span>My Profile</span></div>
+  <div id="pageContent"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><div class="footer-logo">JOHN REY'S <span>NEXGEN</span></div><p>Your one-stop shop!</p></div>
+    <div class="footer-col"><h4>Shop</h4><a href="products.html">All Products</a></div>
+    <div class="footer-col"><h4>Links</h4><a href="cart.html">Cart</a><a href="wishlist.html">Wishlist</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="#">FAQ</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 John Rey's NexGen Shop</span><span>📱 09671756325</span></div>
+</footer>
+
+<script src="store.js"></script>
+<script>
+  function renderAuth() {
+    document.getElementById("pageContent").innerHTML = `
+      <div class="auth-card">
+        <div style="text-align:center;margin-bottom:24px">
+          <div style="font-family:'Press Start 2P',sans-serif;font-size:16px;color:var(--gold)">JOHN REY'S NEXGEN</div>
+          <p style="color:var(--text-dim);margin-top:8px">Sign in to track orders, save wishlists, and more!</p>
+        </div>
+        <div class="auth-tabs">
+          <div class="auth-tab active" onclick="switchTab('login')">LOGIN</div>
+          <div class="auth-tab" onclick="switchTab('register')">REGISTER</div>
+        </div>
+
+        <!-- LOGIN -->
+        <div class="auth-form active" id="loginForm">
+          <div id="loginMsg"></div>
+          <div class="form-group"><label>Email Address</label><input class="form-control" id="loginEmail" type="email" placeholder="juan@email.com"/></div>
+          <div class="form-group"><label>Password</label><input class="form-control" id="loginPass" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+          <button class="btn-primary w-full" style="padding:14px;font-size:15px;margin-bottom:12px" onclick="doLogin()">⚡ LOGIN</button>
+          <p style="text-align:center;font-size:13px;color:var(--text-dim)">Don't have an account? <a href="#" onclick="switchTab('register')" style="color:var(--gold)">Register here</a></p>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="auth-form" id="registerForm">
+          <div id="registerMsg"></div>
+          <div class="form-group"><label>Full Name *</label><input class="form-control" id="regName" placeholder="Juan Dela Cruz"/></div>
+          <div class="form-group"><label>Email Address *</label><input class="form-control" id="regEmail" type="email" placeholder="juan@email.com"/></div>
+          <div class="form-group"><label>Password *</label><input class="form-control" id="regPass" type="password" placeholder="At least 6 characters"/></div>
+          <div class="form-group"><label>Confirm Password *</label><input class="form-control" id="regPass2" type="password" placeholder="Repeat your password" onkeydown="if(event.key==='Enter')doRegister()"/></div>
+          <button class="btn-primary w-full" style="padding:14px;font-size:15px;margin-bottom:12px" onclick="doRegister()">✅ CREATE ACCOUNT</button>
+          <p style="text-align:center;font-size:13px;color:var(--text-dim)">Already have an account? <a href="#" onclick="switchTab('login')" style="color:var(--gold)">Login here</a></p>
+        </div>
+
+        <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--text-dim)">
+          🔒 Your data is stored safely in your browser.<br>It remains even after closing the window!
+        </div>
+      </div>`;
+  }
+
+  function renderProfile(user) {
+    const hash = location.hash;
+    document.getElementById("nav-user-label").textContent = user.name.split(" ")[0];
+    const orders = Store.getOrders();
+    document.getElementById("pageContent").innerHTML = `
+      <div class="profile-layout">
+        <div class="profile-sidebar">
+          <div class="panel" style="margin-bottom:16px;text-align:center">
+            <div class="profile-avatar" style="margin:0 auto 12px">${user.avatar}</div>
+            <div class="profile-name">${user.name}</div>
+            <div class="profile-email">${user.email}</div>
+            <div style="font-size:12px;color:var(--text-dim)">Member since ${user.joined}</div>
+          </div>
+          <div class="panel">
+            <ul class="profile-menu">
+              <li><a href="#info" class="profile-nav ${!hash||hash==='#info'?'active':''}" onclick="showSec('info',this)">📋 My Information</a></li>
+              <li><a href="#orders" class="profile-nav ${hash==='#orders'?'active':''}" onclick="showSec('orders',this)">📦 My Orders (${orders.length})</a></li>
+              <li><a href="#address" class="profile-nav ${hash==='#address'?'active':''}" onclick="showSec('address',this)">🏠 My Address</a></li>
+              <li><a href="#security" class="profile-nav ${hash==='#security'?'active':''}" onclick="showSec('security',this)">🔒 Security</a></li>
+              <li><a href="wishlist.html">♡ My Wishlist</a></li>
+              <li><a href="#" onclick="doLogout()" style="color:var(--red)!important">🚪 Logout</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="profile-main">
+
+          <!-- INFO -->
+          <div class="profile-section ${!hash||hash==='#info'?'active':''}" id="sec-info">
+            <div class="panel">
+              <div class="panel-title">📋 MY INFORMATION</div>
+              <div id="infoMsg"></div>
+              <div class="form-group"><label>Full Name</label><input class="form-control" id="p-name" value="${user.name}"/></div>
+              <div class="form-group"><label>Email</label><input class="form-control" id="p-email" value="${user.email}" type="email"/></div>
+              <div class="form-group"><label>Phone Number</label><input class="form-control" id="p-phone" value="${user.phone||''}" placeholder="09XX XXX XXXX"/></div>
+              <button class="btn-primary" onclick="saveInfo()">💾 Save Changes</button>
+            </div>
+          </div>
+
+          <!-- ORDERS -->
+          <div class="profile-section ${hash==='#orders'?'active':''}" id="sec-orders">
+            <div class="panel-title" style="font-family:'Press Start 2P',sans-serif;font-size:11px;color:var(--gold);margin-bottom:16px">📦 MY ORDERS</div>
+            ${orders.length === 0
+              ? `<div class="empty-state"><div class="empty-icon">📦</div><h3>NO ORDERS YET</h3><p>You haven't placed any orders yet.</p><button class="btn-primary" onclick="location.href='products.html'">Start Shopping</button></div>`
+              : orders.map(o => `
+                <div class="order-card">
+                  <div class="order-header">
+                    <div>
+                      <div class="order-id">${o.id}</div>
+                      <div class="order-date">${o.date} ${o.time}</div>
+                    </div>
+                    <div style="text-align:right">
+                      <span class="order-status status-placed">${o.status}</span><br>
+                      <span class="order-total">${formatPrice(o.total)}</span>
+                    </div>
+                  </div>
+                  <div class="order-items-preview">
+                    ${o.items.slice(0,4).map(i => `<span class="order-item-chip">${i.name} ×${i.qty}</span>`).join("")}
+                    ${o.items.length > 4 ? `<span class="order-item-chip">+${o.items.length-4} more</span>` : ""}
+                  </div>
+                  <div style="font-size:12px;color:var(--text-dim)">
+                    📍 ${o.city}, ${o.region} &nbsp;•&nbsp; 💳 ${o.payment?.toUpperCase()} &nbsp;•&nbsp; 🚚 ${o.shipping===0?"Free Shipping":formatPrice(o.shipping)+" shipping"}
+                  </div>
+                </div>`).join("")}
+          </div>
+
+          <!-- ADDRESS -->
+          <div class="profile-section ${hash==='#address'?'active':''}" id="sec-address">
+            <div class="panel">
+              <div class="panel-title">🏠 MY ADDRESS</div>
+              <div id="addrMsg"></div>
+              <div class="form-group"><label>Phone Number</label><input class="form-control" id="a-phone" value="${user.phone||''}" placeholder="09XX XXX XXXX"/></div>
+              <div class="form-group"><label>Complete Address</label><textarea class="form-control" id="a-addr" rows="3" placeholder="House No., Street, Barangay, City, Province...">${user.address||''}</textarea></div>
+              <button class="btn-primary" onclick="saveAddress()">💾 Save Address</button>
+            </div>
+          </div>
+
+          <!-- SECURITY -->
+          <div class="profile-section ${hash==='#security'?'active':''}" id="sec-security">
+            <div class="panel">
+              <div class="panel-title">🔒 CHANGE PASSWORD</div>
+              <div id="secMsg"></div>
+              <div class="form-group"><label>Current Password</label><input class="form-control" id="s-old" type="password" placeholder="Current password"/></div>
+              <div class="form-group"><label>New Password</label><input class="form-control" id="s-new" type="password" placeholder="New password (min 6 chars)"/></div>
+              <div class="form-group"><label>Confirm New Password</label><input class="form-control" id="s-new2" type="password" placeholder="Repeat new password"/></div>
+              <button class="btn-primary" onclick="changePass()">🔒 Change Password</button>
+            </div>
+          </div>
+
+        </div>
+      </div>`;
+
+    // Activate correct section based on hash
+    if (hash) showSec(hash.replace("#",""), document.querySelector(`.profile-nav[href="${hash}"]`));
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll(".auth-tab").forEach((t,i) => t.classList.toggle("active", (tab==="login"&&i===0)||(tab==="register"&&i===1)));
+    document.getElementById("loginForm").classList.toggle("active", tab==="login");
+    document.getElementById("registerForm").classList.toggle("active", tab==="register");
+  }
+
+  function showSec(id, el) {
+    document.querySelectorAll(".profile-section").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".profile-nav").forEach(a => a.classList.remove("active"));
+    const sec = document.getElementById("sec-"+id);
+    if (sec) sec.classList.add("active");
+    if (el) el.classList.add("active");
+  }
+
+  function doLogin() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const pass = document.getElementById("loginPass").value;
+    const msg = document.getElementById("loginMsg");
+    if (!email||!pass) { msg.innerHTML='<div class="error-msg">Please fill all fields.</div>'; return; }
+    const res = Auth.login(email, pass);
+    if (res.ok) { showToast("Welcome back, "+res.user.name.split(" ")[0]+"!"); renderProfile(res.user); }
+    else { msg.innerHTML=`<div class="error-msg">${res.msg}</div>`; }
+  }
+
+  function doRegister() {
+    const name = document.getElementById("regName").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const pass = document.getElementById("regPass").value;
+    const pass2 = document.getElementById("regPass2").value;
+    const msg = document.getElementById("registerMsg");
+    if (!name||!email||!pass||!pass2) { msg.innerHTML='<div class="error-msg">Please fill all fields.</div>'; return; }
+    if (pass.length < 6) { msg.innerHTML='<div class="error-msg">Password must be at least 6 characters.</div>'; return; }
+    if (pass !== pass2) { msg.innerHTML='<div class="error-msg">Passwords do not match.</div>'; return; }
+    const res = Auth.register(name, email, pass);
+    if (res.ok) { showToast("Account created! Welcome, "+name.split(" ")[0]+"!"); renderProfile(res.user); }
+    else { msg.innerHTML=`<div class="error-msg">${res.msg}</div>`; }
+  }
+
+  function doLogout() {
+    Auth.logout();
+    showToast("Logged out successfully.");
+    setTimeout(() => renderAuth(), 500);
+  }
+
+  function saveInfo() {
+    const name = document.getElementById("p-name").value.trim();
+    const email = document.getElementById("p-email").value.trim();
+    const phone = document.getElementById("p-phone").value.trim();
+    const msg = document.getElementById("infoMsg");
+    if (!name||!email) { msg.innerHTML='<div class="error-msg">Name and email are required.</div>'; return; }
+    Auth.updateProfile({ name, email, phone, avatar: name[0].toUpperCase() });
+    msg.innerHTML='<div class="success-msg">✅ Profile updated!</div>';
+    document.getElementById("nav-user-label").textContent = name.split(" ")[0];
+  }
+
+  function saveAddress() {
+    const address = document.getElementById("a-addr").value.trim();
+    const phone = document.getElementById("a-phone").value.trim();
+    Auth.updateProfile({ address, phone });
+    document.getElementById("addrMsg").innerHTML='<div class="success-msg">✅ Address saved!</div>';
+  }
+
+  function changePass() {
+    const user = Auth.getUser();
+    const old = document.getElementById("s-old").value;
+    const newP = document.getElementById("s-new").value;
+    const newP2 = document.getElementById("s-new2").value;
+    const msg = document.getElementById("secMsg");
+    if (old !== user.password) { msg.innerHTML='<div class="error-msg">Current password is incorrect.</div>'; return; }
+    if (newP.length < 6) { msg.innerHTML='<div class="error-msg">New password must be at least 6 characters.</div>'; return; }
+    if (newP !== newP2) { msg.innerHTML='<div class="error-msg">Passwords do not match.</div>'; return; }
+    Auth.updateProfile({ password: newP });
+    msg.innerHTML='<div class="success-msg">✅ Password changed!</div>';
+    ["s-old","s-new","s-new2"].forEach(id => document.getElementById(id).value="");
+  }
+
+  // Init
+  const user = Auth.getUser();
+  if (user) renderProfile(user);
+  else renderAuth();
+</script>
+</body>
+</html>
