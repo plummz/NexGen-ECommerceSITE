@@ -161,7 +161,7 @@ img { display:block; max-width:100%; }
   position:relative;
   height:480px;
   overflow:hidden;
-  background:var(--dark);
+  background: rgba(0, 0, 0, 0.3); ;
   display:flex; align-items:center; justify-content:center;
   text-align:center;
 }
